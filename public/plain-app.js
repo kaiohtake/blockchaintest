@@ -11,7 +11,7 @@ let busy = false;
 fetch("/api/status")
   .then((r) => r.json())
   .then((s) => {
-    statusEl.textContent = s.mode === "openai" ? s.model : "local mode";
+    statusEl.textContent = s.chatEnabled ? s.model : "local mode";
   })
   .catch(() => {
     statusEl.textContent = "offline";

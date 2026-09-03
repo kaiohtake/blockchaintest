@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chat (plain fallback)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
+<link rel="stylesheet" href="/plain.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Chat</h1>
+      <span class="badge" id="status">connecting…</span>
+      <button class="ghost" id="clear" type="button">Clear</button>
+    </header>
+
+    <main id="log" aria-live="polite">
+      <div class="empty" id="empty">
+        <p>Start a conversation.</p>
+      </div>
+    </main>
+
+    <form id="composer" autocomplete="off">
+      <textarea id="input" rows="1" placeholder="Send a message…" aria-label="Message"></textarea>
+      <button id="send" type="submit" aria-label="Send">↑</button>
+    </form>
+  </div>
+  <script src="/plain-app.js"></script>
+</body>
+</html>

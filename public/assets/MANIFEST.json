@@ -1,0 +1,282 @@
+[
+  {
+    "file": "public/vendor/three/three.module.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+    "license": "MIT",
+    "bytes": 650153,
+    "sha256": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7",
+    "notes": "three.js core (public API surface)"
+  },
+  {
+    "file": "public/vendor/three/three.core.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.core.js",
+    "license": "MIT",
+    "bytes": 1443056,
+    "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759",
+    "notes": "three.js core internals; three.module.js imports this"
+  },
+  {
+    "file": "public/vendor/three/LICENSE",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/LICENSE",
+    "license": "MIT",
+    "bytes": 1081,
+    "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+    "notes": "three.js license text"
+  },
+  {
+    "file": "public/vendor/three/addons/loaders/GLTFLoader.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/loaders/GLTFLoader.js",
+    "license": "MIT",
+    "bytes": 114959,
+    "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2",
+    "notes": "imports ../utils/BufferGeometryUtils.js, ../utils/SkeletonUtils.js"
+  },
+  {
+    "file": "public/vendor/three/addons/loaders/DRACOLoader.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/loaders/DRACOLoader.js",
+    "license": "MIT",
+    "bytes": 19030,
+    "sha256": "fdafdf4aa11bbc65d89adb338efd844bedf94073702f9049240ff1f1ea48ad5f",
+    "notes": "decoder assets at addons/libs/draco/gltf/"
+  },
+  {
+    "file": "public/vendor/three/addons/loaders/RGBELoader.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/loaders/RGBELoader.js",
+    "license": "MIT",
+    "bytes": 268,
+    "sha256": "6c08f9c441040a61a188ad7711078da4df48f8c5ac3b3725dd6f10ac9ff81162",
+    "notes": "deprecated shim, re-exports HDRLoader"
+  },
+  {
+    "file": "public/vendor/three/addons/loaders/HDRLoader.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/loaders/HDRLoader.js",
+    "license": "MIT",
+    "bytes": 12079,
+    "sha256": "0986b578f9acd14cec74e5ee85e07f45e681b40bcd229a601a0391201f9b5ff1",
+    "notes": "Radiance .hdr loader"
+  },
+  {
+    "file": "public/vendor/three/addons/capabilities/WebGL.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/capabilities/WebGL.js",
+    "license": "MIT",
+    "bytes": 2555,
+    "sha256": "02d6f471f7cfe5f70b27fcef39e0ba236229a79365c45071e193d4a32495e8a1",
+    "notes": "WebGL2 support check, used for the /plain.html fallback redirect"
+  },
+  {
+    "file": "public/vendor/three/addons/utils/BufferGeometryUtils.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/utils/BufferGeometryUtils.js",
+    "license": "MIT",
+    "bytes": 37621,
+    "sha256": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595",
+    "notes": "GLTFLoader dependency"
+  },
+  {
+    "file": "public/vendor/three/addons/utils/SkeletonUtils.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/utils/SkeletonUtils.js",
+    "license": "MIT",
+    "bytes": 11535,
+    "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+    "notes": "GLTFLoader dependency (clone helper for skinned meshes)"
+  },
+  {
+    "file": "public/vendor/three/addons/libs/draco/gltf/draco_decoder.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/libs/draco/gltf/draco_decoder.js",
+    "license": "Apache-2.0 (Google Draco)",
+    "bytes": 512465,
+    "sha256": "8625489da79a805f4f2a7d511c3e52d8b4085608a9d2a4d5f4f9de5db0aea04f",
+    "notes": "draco JS decoder"
+  },
+  {
+    "file": "public/vendor/three/addons/libs/draco/gltf/draco_decoder.wasm",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/libs/draco/gltf/draco_decoder.wasm",
+    "license": "Apache-2.0 (Google Draco)",
+    "bytes": 192420,
+    "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac",
+    "notes": "draco wasm decoder binary"
+  },
+  {
+    "file": "public/vendor/three/addons/libs/draco/gltf/draco_wasm_wrapper.js",
+    "source_url": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js",
+    "license": "Apache-2.0 (Google Draco)",
+    "bytes": 58456,
+    "sha256": "8bb2952d2ba7d67e1414f8df819410cb0434a666be53f671fff75f68843d76f6",
+    "notes": "draco wasm wrapper"
+  },
+  {
+    "file": "public/js/lipsync-en.mjs",
+    "source_url": "https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.7/modules/lipsync-en.mjs",
+    "license": "MIT",
+    "bytes": 18284,
+    "sha256": "589e9d8c7c8916e15bf16a0a25b96737d141b8044958c06171f46d1dda17c067",
+    "notes": "Copyright (c) 2023-2024 Mika Suominen; patched [HOUR]=aa EE -> aa U and [OUP]=U OO -> U"
+  },
+  {
+    "file": "public/assets/detective.glb",
+    "source_url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Avatars/Professions/Business_Male_01/Export/Business_Male_01_facial.fbx",
+    "license": "MIT (Microsoft Rocketbox)",
+    "bytes": 8181620,
+    "sha256": "252818849dd08dfcc7862a7db215a9e303661bd6c7d5d51fe59392ef30ddbf03",
+    "notes": "FBX2glTF 0.9.7 conversion; 175 morph targets x 3 primitives, targetNames injected via gltf-transform (Oculus visemes idx 0-14, ARKit AK_* idx 15-66); textures re-embedded at 1024px (body/head diffuse+normal JPEG q85, hair/opacity PNG w/ alpha, MASK 0.5); draco-compressed geometry via gltf-transform optimize"
+  },
+  {
+    "file": "public/assets/clips/sit_idle.glb",
+    "source_url": "https://raw.githubusercontent.com/microsoft/Microsoft-Rocketbox/master/Assets/Animations/Interaction%20Poses/Sitting/m_sit_table_idle_neutral_01.fbx",
+    "license": "MIT (Microsoft Rocketbox)",
+    "bytes": 392356,
+    "sha256": "d38ca921c0b4090411c1db781aa1b3292df212ec4c8299ade486fc282033e1ca",
+    "notes": "FBX2glTF conversion; meshes/skins already absent from source export; gltf-transform prune+resample; animation-only GLB, 1 clip \"Take 001\", 45.67s, 141 tracks"
+  },
+  {
+    "file": "public/assets/room/wooden_table_02.glb",
+    "source_url": "https://api.polyhaven.com/files/wooden_table_02 (gltf.1k)",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 488736,
+    "sha256": "b8b416b28775ce023eba83360669c496e55e70cdd7949653c1286fba60db1978",
+    "notes": "packed to self-contained GLB, textures embedded <=1024px JPEG via gltf-transform"
+  },
+  {
+    "file": "public/assets/room/school_chair_01.glb",
+    "source_url": "https://api.polyhaven.com/files/SchoolChair_01 (gltf.1k)",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 511716,
+    "sha256": "a2a68f566b15a6e6bfc9184cf7e110ec519c2fd8a2a6057ebd9de90a5bc1cc8e",
+    "notes": "packed to self-contained GLB, textures embedded <=1024px JPEG via gltf-transform"
+  },
+  {
+    "file": "public/assets/room/hanging_industrial_lamp.glb",
+    "source_url": "https://api.polyhaven.com/files/hanging_industrial_lamp (gltf.1k)",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 1090112,
+    "sha256": "26d76fc4fd57abb872b6abea231ed0a6c799864a01ede15af2df0801a453a6f1",
+    "notes": "packed to self-contained GLB, textures embedded <=1024px JPEG via gltf-transform (incl. emissive + glass layers)"
+  },
+  {
+    "file": "public/assets/tex/concrete_wall_diff.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_diff_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 623051,
+    "sha256": "a203166d280d3cfc6a91bbc9ffdae406eb9555b4a4f658cd92619063eb17c147",
+    "notes": "concrete_wall_008 diffuse, 1k"
+  },
+  {
+    "file": "public/assets/tex/concrete_wall_nor.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_nor_gl_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 511519,
+    "sha256": "83cd3fa2c7cbf4c81402386065daf8fa6f72e1f1f77e02ccb1eedb28496909ae",
+    "notes": "concrete_wall_008 normal (GL/+Y), 1k"
+  },
+  {
+    "file": "public/assets/tex/concrete_wall_rough.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_wall_008/concrete_wall_008_rough_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 322313,
+    "sha256": "2344fe72c4dc2fb9e4ce9b47079524ee8969f22c4af4bee85667511073fbf14a",
+    "notes": "concrete_wall_008 roughness, 1k"
+  },
+  {
+    "file": "public/assets/tex/concrete_floor_diff.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_diff_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 776097,
+    "sha256": "6db84a6d87dc50508b9d134d6fbd2b7e876b8081a5f43a118a249ca18de73af5",
+    "notes": "concrete_floor_02 diffuse, 1k"
+  },
+  {
+    "file": "public/assets/tex/concrete_floor_nor.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_nor_gl_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 192757,
+    "sha256": "fcda391b57a816d646ae15544688be53790478da5cd48dbe514b3c6901415e61",
+    "notes": "concrete_floor_02 normal (GL/+Y), 1k"
+  },
+  {
+    "file": "public/assets/tex/concrete_floor_rough.jpg",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/concrete_floor_02/concrete_floor_02_rough_1k.jpg",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 318550,
+    "sha256": "c7f026a611b7859903c61ec7fd4574944157223e9e7796413dd6e2a66eaeac7a",
+    "notes": "concrete_floor_02 roughness, 1k"
+  },
+  {
+    "file": "public/assets/hdr/warehouse_1k.hdr",
+    "source_url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/empty_warehouse_01_1k.hdr",
+    "license": "CC0 (Poly Haven)",
+    "bytes": 1672140,
+    "sha256": "9b3d611cadc32c3a0c7e084ce5611c0650293881c4a041e7fa13748fe0dc6451",
+    "notes": "empty_warehouse_01, 1k, Radiance HDR"
+  },
+  {
+    "file": "public/assets/fonts/CourierPrime-Regular.ttf",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/courierprime/CourierPrime-Regular.ttf",
+    "license": "OFL-1.1",
+    "bytes": 71188,
+    "sha256": "72f793376f8e2841656bf21d77a5de010f2929bd6956a22ee848ad0c7eb978af",
+    "notes": ""
+  },
+  {
+    "file": "public/assets/fonts/CourierPrime-Bold.ttf",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/courierprime/CourierPrime-Bold.ttf",
+    "license": "OFL-1.1",
+    "bytes": 72856,
+    "sha256": "ff1f38786c849d1c41fa8e447960abdb2bd75fdfb0cfcdeb524fad65a5af3638",
+    "notes": ""
+  },
+  {
+    "file": "public/assets/fonts/CourierPrime-OFL.txt",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/main/ofl/courierprime/OFL.txt",
+    "license": "OFL-1.1",
+    "bytes": 4403,
+    "sha256": "9a755af092b494944c99f471be6fddd19b006a448fefdc4717e4ee0aa09a97b0",
+    "notes": "license text"
+  },
+  {
+    "file": "public/assets/fonts/SpecialElite-Regular.ttf",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/main/apache/specialelite/SpecialElite-Regular.ttf",
+    "license": "Apache-2.0",
+    "bytes": 166180,
+    "sha256": "a776fcb4ceb8bdf03e2967688ebdad42680de5b91a7e62c17e718ae212d14bc4",
+    "notes": ""
+  },
+  {
+    "file": "public/assets/fonts/SpecialElite-LICENSE.txt",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/main/apache/specialelite/LICENSE.txt",
+    "license": "Apache-2.0",
+    "bytes": 11358,
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "notes": "license text"
+  },
+  {
+    "file": "public/assets/sfx/tick.ogg",
+    "source_url": "https://opengameart.org/sites/default/files/ticking_clock.wav",
+    "license": "CC0 (\"Ticking Clock\" by AntumDeluge, OpenGameArt)",
+    "bytes": 10733,
+    "sha256": "a4ee644a00b309fabda77b044e794ca6392cda9af0b1133a006860280c4b6524",
+    "notes": "trimmed to a single 0.35s tick with a 100ms fade-out, transcoded WAV->OGG Vorbis"
+  },
+  {
+    "file": "public/assets/sfx/creak.ogg",
+    "source_url": "https://opengameart.org/sites/default/files/100-CC0-SFX_0.zip (wooden_02.ogg)",
+    "license": "CC0 (\"100 CC0 SFX\" by rubberduck, OpenGameArt)",
+    "bytes": 19447,
+    "sha256": "a6f6edf91a63c5af9059f70df0ac4e3fcee2c57342dc41dd3a166810365392fd",
+    "notes": "wood creak/movement one-shot, 0.40s, used as-is"
+  },
+  {
+    "file": "public/assets/sfx/slam.ogg",
+    "source_url": "https://opengameart.org/sites/default/files/100-CC0-SFX_0.zip (hit_03.ogg)",
+    "license": "CC0 (\"100 CC0 SFX\" by rubberduck, OpenGameArt)",
+    "bytes": 20643,
+    "sha256": "c8948294e7885ada74bcab6efb6c60613b74241cc58eacd18e81aa6bd33449b8",
+    "notes": "SUBSTITUTED for Kenney Impact Sounds: kenney.nl/assets/impact-sounds serves its download zip via client-side JS with no static URL found; rubberduck hit_03.ogg is an equivalent CC0 single-impact one-shot, 0.43s, used as-is"
+  },
+  {
+    "file": "public/assets/sfx/click.ogg",
+    "source_url": "synthesized",
+    "license": "N/A (procedurally generated, no third-party source)",
+    "bytes": 5940,
+    "sha256": "d733b74cd320970945fec17ec8650ba1cb5bf13688cfa1c90f3c231e166a1d88",
+    "notes": "SYNTHESIZED lamp-switch click: 25ms highpass-filtered (1200Hz) white noise burst with a 1ms attack / 17ms exponential-ish fade, via ffmpeg anoisesrc — no suitable CC0 source found quickly, task explicitly allows synthesis as a non-blocking fallback"
+  }
+]

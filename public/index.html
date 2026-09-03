@@ -2,30 +2,62 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Chat</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
-<link rel="stylesheet" href="/style.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Interrogation Room 2</title>
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='38' r='22' fill='%23ffd9a8'/><rect x='10' y='72' width='80' height='14' fill='%23b8845a'/></svg>" />
+<link rel="stylesheet" href="/css/interrogation.css" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "/vendor/three/three.module.js",
+    "three/addons/": "/vendor/three/addons/"
+  }
+}
+</script>
 </head>
-<body>
-  <div class="app">
-    <header>
-      <h1>Chat</h1>
-      <span class="badge" id="status">connecting…</span>
-      <button class="ghost" id="clear" type="button">Clear</button>
-    </header>
+<body class="loading">
+  <canvas id="view" aria-hidden="true"></canvas>
 
-    <main id="log" aria-live="polite">
-      <div class="empty" id="empty">
-        <p>Start a conversation.</p>
-      </div>
-    </main>
+  <div id="grade" aria-hidden="true"></div>
+  <div class="bar top" aria-hidden="true"></div>
+  <div class="bar bottom" aria-hidden="true"></div>
 
-    <form id="composer" autocomplete="off">
-      <textarea id="input" rows="1" placeholder="Send a message…" aria-label="Message"></textarea>
-      <button id="send" type="submit" aria-label="Send">↑</button>
-    </form>
+  <div id="subtitle" class="paper" aria-live="polite" hidden></div>
+  <div id="thinking" class="paper" aria-hidden="true" hidden><span></span><span></span><span></span></div>
+
+  <aside id="transcript" class="sheet closed" hidden>
+    <header id="sheetHead"><span class="stamp">CASE 2-1187 · ROOM 2</span><span class="toggle" id="sheetToggle">open</span><button type="button" id="clear" title="Start a new interview">new case</button></header>
+    <div id="record" tabindex="0" aria-label="Transcript"></div>
+  </aside>
+
+  <form id="you" autocomplete="off" hidden>
+    <label for="input" class="tag">YOU</label>
+    <textarea id="input" rows="1" placeholder="Say something." aria-label="Your answer"></textarea>
+    <button id="send" type="submit" aria-label="Answer">answer</button>
+    <label id="voiceRow" class="voice" hidden><input type="checkbox" id="voice" /> voice</label>
+  </form>
+
+  <div id="card" class="paper card" role="status" hidden></div>
+
+  <div id="ending" class="paper card ending" role="alertdialog" aria-labelledby="endStamp" hidden>
+    <p class="stamp" id="endStamp">INTERVIEW ENDED</p>
+    <p id="endLine"></p>
+    <button type="button" id="again">SIT BACK DOWN</button>
   </div>
-  <script src="/app.js"></script>
+
+  <div id="gate">
+    <div class="gate-inner">
+      <p class="eyebrow">INTERROGATION ROOM 2</p>
+      <h1>You have been waiting a while.</h1>
+      <p id="gateNote" class="note">Loading the room.</p>
+      <div class="progress"><div id="progressBar"></div></div>
+      <button id="sit" type="button" disabled>SIT DOWN</button>
+      <p class="fine">They brought you in at 1:40 and nobody has said why. Detective Ray Kowalski will see you now. Everything you say is on the record, and he answers everything.</p>
+      <p class="fine tiny"><a href="/plain.html">plain text version</a></p>
+    </div>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
 </body>
 </html>

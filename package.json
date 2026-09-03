@@ -1,16 +1,20 @@
 {
-  "name": "blockchaintest",
+  "name": "the-interrogation",
   "version": "1.0.0",
-  "description": "Simple chat web app (OpenAI-backed, local fallback)",
-  "license": "ISC",
-  "author": "",
+  "description": "A chat app that is one scene of a game: you are the suspect, the 3D detective is the model.",
+  "license": "MIT",
+  "author": "Kai Ohtake",
   "type": "commonjs",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node --env-file=.env server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "verify": "node scripts/verify.mjs",
+    "check-tools": "node scripts/check-tools.mjs"
   },
   "dependencies": {
     "openai": "^7.9.0"
+  },
+  "engines": {
+    "node": ">=20.6"
   }
 }
