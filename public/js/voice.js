@@ -11,7 +11,9 @@ export class Voice {
     this.analyser = null;
     this.data = null;
     this.onSentenceStart = () => {};
+    this.onDrain = null;
   }
+  busy() { return Boolean(this.playing) || this.queue.some((q) => !q.done && q.seq === this.seq); }
   setEnabled(on) {
     this.enabled = on;
     if (!on) this.cancel();
@@ -20,6 +22,7 @@ export class Voice {
     this.seq++;
     this.queue = [];
     if (this.playing) { try { this.playing.stop(); } catch {} this.playing = null; }
+    if (this.onDrain) { const f = this.onDrain; this.onDrain = null; f(); }
   }
   speak(text) {
     if (!this.enabled || !this.audio.ctx) return;
@@ -38,7 +41,8 @@ export class Voice {
     if (this.playing) return;
     while (this.queue.length && (this.queue[0].done || this.queue[0].seq !== this.seq)) this.queue.shift();
     const item = this.queue[0];
-    if (!item || !item.buffer) return;
+    if (!item) { if (this.onDrain) { const f = this.onDrain; this.onDrain = null; f(); } return; }
+    if (!item.buffer) return;
     const c = this.audio.ctx;
     if (!this.analyser) {
       this.analyser = c.createAnalyser();

@@ -117,7 +117,9 @@ function readBody(req, limit = 4e5) {
 function sameOrigin(req) {
   const host = String(req.headers.host || "").toLowerCase();
   const allowed = (process.env.ALLOW_HOSTS || "").split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
-  const hostOk = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host) || allowed.includes(host);
+  // On a hosting platform the platform's own hostname is the site; locally only localhost is.
+  const deployed = Boolean(process.env.VERCEL || process.env.RENDER || process.env.FLY_APP_NAME || process.env.RAILWAY_ENVIRONMENT || process.env.ALLOW_ANY_HOST);
+  const hostOk = deployed || /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host) || allowed.includes(host);
   if (!hostOk) return false;
   const origin = req.headers.origin;
   if (!origin) return true;
@@ -155,7 +157,7 @@ async function streamCompletion(messages, send, req, cue) {
   const base = {
     model: MODEL,
     stream: true,
-    max_completion_tokens: 600,
+    max_completion_tokens: 1400,
     messages: [{ role: "system", content: PERSONA }, ...thread],
   };
   // Low reasoning effort keeps first-token latency short; not every model

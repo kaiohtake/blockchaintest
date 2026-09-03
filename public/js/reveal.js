@@ -1,9 +1,15 @@
 // The typewriter. This loop is the master clock: the mouth, the blip, the
 // subtitle and the transcript all hang off what it reveals, never off the
 // network. Tokens arrive in bursts; the reveal paces them.
-const CHAR_MS = 1000 / 45;
-const FAST_MS = 1000 / 70;
-const CATCHUP_AT = 150;
+const CHAR_MS = 1000 / 22;
+// The typewriter speeds up with the backlog: short lines read at reading
+// pace; a long numbered answer would take a minute, so it accelerates and the
+// case file becomes the reading surface.
+function paceMs(pending) {
+  if (pending > 400) return 1000 / 34;
+  if (pending > 150) return 1000 / 28;
+  return CHAR_MS;
+}
 const PAUSE = { ",": 160, ";": 160, ":": 200, ".": 340, "!": 340, "?": 360, "\n": 220 };
 
 export class Reveal {
@@ -25,8 +31,10 @@ export class Reveal {
     this.streamDone = false;
     this.speaking = false;
     this.next = 0;
-    this.pendingIdle = false;
+    this.paused = false;
   }
+  pause() { this.paused = true; }
+  resume(now) { this.paused = false; this.next = now || 0; }
   push(text) {
     if (!this.speaking) this.next = 0;
     this.buffer += text;
@@ -88,6 +96,8 @@ export class Reveal {
   // Frame-rate independent: reveals as many characters as the clock owes,
   // so a slow frame does not slow the typewriter.
   update(now) {
+    // A held page blocks everything, including the idle path.
+    if (this.paused) { this.next = now; return; }
     if (this.pos >= this.buffer.length) {
       if (this.streamDone && this.speaking) this.settle();
       return;
@@ -98,11 +108,12 @@ export class Reveal {
     if (this.next === 0) this.next = now;
     while (this.pos < this.buffer.length && now >= this.next && guard++ < 40) {
       const ch = this.step();
-      const ms = this.instant ? 0 : this.pending > CATCHUP_AT ? FAST_MS : CHAR_MS;
+      const ms = this.instant ? 0 : paceMs(this.pending);
       this.next = Math.max(this.next, now - 120) + ms + (this.instant ? 0 : (PAUSE[ch] || 0));
       changed = true;
     }
     if (changed) this.onUpdate(this.revealed, this.sentence);
+    if (this.paused) return;
     if (this.pos >= this.buffer.length && this.streamDone) this.settle();
   }
 }

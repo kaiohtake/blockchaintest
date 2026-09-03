@@ -81,15 +81,19 @@ body.letterbox { --bar-h: 11vh; }
 
 /* Subtitle: the current sentence, near his head. */
 #subtitle {
-  position: fixed; z-index: 4; pointer-events: none;
-  max-width: min(440px, 78vw);
+  position: fixed; z-index: 4; pointer-events: auto;
+  width: min(460px, 80vw);
   padding: 10px 14px 11px;
   font-size: 17px; line-height: 1.32;
   transform: translate(-50%, -100%);
   will-change: transform, left, top;
   white-space: pre-wrap;
-  max-height: 3.4em; overflow: hidden;
+  height: calc(1.32em * 4 + 21px); overflow: hidden;
+  overflow-wrap: anywhere; word-break: break-word;
+  scrollbar-width: thin; scrollbar-color: rgba(23,20,15,0.45) transparent;
+  transition: opacity 260ms ease;
 }
+#subtitle.fading { opacity: 0; }
 #subtitle::after {
   content: ""; position: absolute; left: 50%; bottom: -11px; margin-left: -6px;
   border: 6px solid transparent; border-top-color: var(--paper); border-bottom: 0;
@@ -100,6 +104,8 @@ body.letterbox { --bar-h: 11vh; }
 }
 #subtitle.tremor { animation: tremor 90ms linear infinite; }
 @keyframes tremor { 0%{ margin-left:0 } 50%{ margin-left:1px } 100%{ margin-left:-1px } }
+#subtitle .more { position: absolute; right: 8px; bottom: 4px; font-size: 10px; color: var(--ink-soft); animation: bob 0.9s ease-in-out infinite; pointer-events: none; }
+@keyframes bob { 50% { transform: translateY(2px); } }
 #subtitle .caret { display: inline-block; width: 0.55em; height: 1em; vertical-align: -0.15em; background: var(--ink); animation: caret 1s steps(2) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 
@@ -211,6 +217,6 @@ body.busy #you { opacity: .55; }
 @media (prefers-reduced-motion: reduce) {
   #grade::after { display: none; }
   #subtitle.tremor { animation: none; }
-  #subtitle .caret, #thinking span { animation: none; }
+  #subtitle .caret, #subtitle .more, #thinking span { animation: none; }
   .bar { transition: none; }
 }

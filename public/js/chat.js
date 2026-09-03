@@ -43,6 +43,8 @@ export class TagParser {
 }
 
 export const SEED = "[The suspect sits down across the table.]";
+export const OPENING_LOCAL = "[sighs] Sit down, friend. Line's dead tonight. Somebody forgot to put OPENAI_API_KEY in the .env file and restart. Until they do, I can't hear a word you say. So. Who forgot?";
+export const OPENING = "[checks file] It's 2:13 in the morning, friend. Somebody just emptied the Vault. Four thousand ETH, one transaction, three signatures, and one of them is yours. So. Where were you tonight?";
 
 export class Chat {
   constructor() {
