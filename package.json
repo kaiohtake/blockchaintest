@@ -1,16 +1,16 @@
 {
   "name": "blockchaintest",
   "version": "1.0.0",
-  "description": "Simple chat web app (Claude-backed, local fallback)",
+  "description": "Simple chat web app (OpenAI-backed, local fallback)",
   "license": "ISC",
   "author": "",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --env-file=.env server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.123.0"
+    "openai": "^7.9.0"
   }
 }

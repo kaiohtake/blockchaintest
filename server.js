@@ -3,19 +3,19 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = Number(process.env.PORT) || 3000;
-const MODEL = "claude-opus-5";
+const MODEL = process.env.OPENAI_MODEL || "gpt-5.6-sol";
 const SYSTEM = "You are a concise, friendly assistant in a small chat app. Keep answers tight unless asked to elaborate.";
 
-// Claude is used when credentials are present; otherwise the app falls back to
+// OpenAI is used when a key is present; otherwise the app falls back to
 // a local responder so it still runs with zero setup.
 let client = null;
 try {
-  if (process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN) {
-    const Anthropic = require("@anthropic-ai/sdk");
-    client = new Anthropic();
+  if (process.env.OPENAI_API_KEY) {
+    const OpenAI = require("openai");
+    client = new OpenAI();
   }
 } catch (err) {
-  console.warn("Anthropic SDK unavailable, using local mode:", err.message);
+  console.warn("OpenAI SDK unavailable, using local mode:", err.message);
 }
 
 const MIME = {
@@ -29,11 +29,11 @@ function localReply(messages) {
   const last = messages[messages.length - 1]?.content ?? "";
   const turns = messages.filter((m) => m.role === "user").length;
   return [
-    `Local mode: no Claude credentials found, so I am echoing instead of thinking.`,
+    `Local mode: no OpenAI key found, so I am echoing instead of thinking.`,
     ``,
     `You said (${last.length} chars, message ${turns}): "${last}"`,
     ``,
-    `Set ANTHROPIC_API_KEY and restart to talk to ${MODEL}.`,
+    `Set OPENAI_API_KEY in .env and restart to talk to ${MODEL}.`,
   ].join("\n");
 }
 
@@ -90,16 +90,21 @@ async function handleChat(req, res) {
   }
 
   try {
-    const stream = client.messages.stream({
+    const stream = await client.chat.completions.create({
       model: MODEL,
-      max_tokens: 8000,
-      system: SYSTEM,
-      messages,
+      stream: true,
+      messages: [{ role: "system", content: SYSTEM }, ...messages],
     });
-    stream.on("text", (text) => send("delta", { text }));
-    const final = await stream.finalMessage();
-    if (final.stop_reason === "refusal") {
-      send("delta", { text: "\n\n_(Claude declined this request.)_" });
+    let finish = null;
+    for await (const chunk of stream) {
+      const choice = chunk.choices?.[0];
+      if (!choice) continue;
+      const text = choice.delta?.content;
+      if (text) send("delta", { text });
+      if (choice.finish_reason) finish = choice.finish_reason;
+    }
+    if (finish === "content_filter") {
+      send("delta", { text: "\n\n_(OpenAI declined this request.)_" });
     }
     send("done", {});
   } catch (err) {
@@ -131,11 +136,11 @@ http
     if (req.method === "POST" && req.url === "/api/chat") return handleChat(req, res);
     if (req.method === "GET" && req.url === "/api/status") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      return res.end(JSON.stringify({ mode: client ? "claude" : "local", model: client ? MODEL : null }));
+      return res.end(JSON.stringify({ mode: client ? "openai" : "local", model: client ? MODEL : null }));
     }
     if (req.method === "GET") return serveStatic(req, res);
     res.writeHead(405).end();
   })
   .listen(PORT, () => {
-    console.log(`chat app -> http://localhost:${PORT}  (${client ? `Claude: ${MODEL}` : "local mode, no API key"})`);
+    console.log(`chat app -> http://localhost:${PORT}  (${client ? `OpenAI: ${MODEL}` : "local mode, no API key"})`);
   });
