@@ -85,22 +85,20 @@ body.letterbox { --bar-h: 11vh; }
   width: min(460px, 80vw);
   padding: 10px 14px 11px;
   font-size: 17px; line-height: 1.32;
-  transform: translate(-50%, -100%);
+  transform: translate(0, -50%);
   will-change: transform, left, top;
   white-space: pre-wrap;
-  height: calc(1.32em * 4 + 21px); overflow: hidden;
+  min-height: calc(1.32em + 21px); max-height: calc(1.32em * 4 + 21px); overflow: hidden;
   overflow-wrap: anywhere; word-break: break-word;
   scrollbar-width: thin; scrollbar-color: rgba(23,20,15,0.45) transparent;
   transition: opacity 260ms ease;
 }
 #subtitle.fading { opacity: 0; }
-#subtitle::after {
-  content: ""; position: absolute; left: 50%; bottom: -11px; margin-left: -6px;
-  border: 6px solid transparent; border-top-color: var(--paper); border-bottom: 0;
-}
-#subtitle::before {
-  content: ""; position: absolute; left: 50%; bottom: -13px; margin-left: -7px;
-  border: 7px solid transparent; border-top-color: rgba(23,20,15,0.85); border-bottom: 0;
+/* Tail on the left edge, pointing at him. Lives on a sibling so it is never clipped. */
+#tail {
+  position: fixed; z-index: 4; pointer-events: none; width: 0; height: 0;
+  border: 8px solid transparent; border-right-color: var(--paper); border-left: 0;
+  filter: drop-shadow(-1px 0 0 rgba(23,20,15,0.85));
 }
 #subtitle.tremor { animation: tremor 90ms linear infinite; }
 @keyframes tremor { 0%{ margin-left:0 } 50%{ margin-left:1px } 100%{ margin-left:-1px } }
@@ -111,7 +109,7 @@ body.letterbox { --bar-h: 11vh; }
 
 #thinking {
   position: fixed; z-index: 4; pointer-events: none; padding: 9px 12px;
-  transform: translate(-50%, -100%); display: flex; gap: 6px;
+  transform: translate(0, -50%); display: flex; gap: 6px;
 }
 #thinking span { width: 6px; height: 6px; background: var(--ink); border-radius: 50%; animation: dot 1.1s infinite; }
 #thinking span:nth-child(2) { animation-delay: .18s; }
@@ -144,6 +142,7 @@ body.letterbox { --bar-h: 11vh; }
 #record { overflow-y: auto; padding: 8px 12px 10px; font-size: 12.5px; line-height: 1.45; }
 #record p { margin: 0 0 8px; white-space: pre-wrap; word-break: break-word; }
 #record p.you { color: var(--ink-soft); }
+#record p.pending { opacity: .55; }
 #record p .who { font-family: var(--type); font-size: 10px; letter-spacing: .12em; display: block; color: var(--red); margin-bottom: 1px; }
 #record pre { background: rgba(23,20,15,0.08); padding: 6px 8px; margin: 0 0 8px; overflow-x: auto; font-size: 12px; }
 
@@ -200,7 +199,7 @@ body.busy #you { opacity: .55; }
   transition: background 200ms, color 200ms;
 }
 #sit:not(:disabled):hover { background: var(--paper); color: #000; }
-#sit:disabled { opacity: .35; cursor: default; }
+#sit:disabled { opacity: .35; cursor: wait; border-style: dashed; }
 .gate-inner .fine { margin: 22px 0 0; font-size: 12px; color: rgba(239,230,207,0.5); line-height: 1.5; }
 .gate-inner .tiny { font-size: 11px; }
 .gate-inner a { color: inherit; }

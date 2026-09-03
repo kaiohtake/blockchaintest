@@ -34,7 +34,7 @@ try { status = await (await fetch("/api/status")).json(); } catch {}
 // ---- loading ----------------------------------------------------------
 const manager = new THREE.LoadingManager();
 let loaded = 0, total = 0;
-manager.onProgress = (_url, n, t) => { loaded = n; total = t; progressBar.style.width = `${Math.round((n / Math.max(t, 1)) * 100)}%`; };
+manager.onProgress = (_url, n, t) => { loaded = n; total = t; const pct = Math.round((n / Math.max(t, 1)) * 100); progressBar.style.width = `${pct}%`; if (sit.disabled) gateNote.textContent = `Loading the room. ${pct}%`; };
 manager.onError = (url) => console.warn("asset failed:", url);
 manager.onLoad = () => { progressBar.style.width = "100%"; };
 
@@ -188,7 +188,7 @@ function finishIdle(revealed) {
     idleTimers.push(setTimeout(tryFade, readingMs(pageText()) + 2000));
     if (pendingEnd) { pendingEnd = false; endTimer = setTimeout(() => endInterview(revealed), 1200); }
     setBusy(false);
-    if (queuedText && !interviewOver) { const t = queuedText; queuedText = ""; setTimeout(() => ask(t), 400); }
+    if (queuedText && !interviewOver) { const t = queuedText; queuedText = ""; ask(t, { logged: true }); }
     queuedText = "";
 }
 voice.onSentenceStart = (text) => {
@@ -244,6 +244,7 @@ function endInterview(lastText) {
     ? "Case 2-1187 goes to the DA in the morning. You can call someone from the desk."
     : "Case 2-1187 stays open. Do not leave town, friend.";
   ending.hidden = false;
+  form.hidden = true;
   $("again").focus();
   interviewOver = true;
   audio.setAmbienceLevel(0.06);
@@ -255,12 +256,12 @@ let idleTimers = [];
 let holdUntil = 0;
 let held = [];
 function releaseHeld() { for (const t of held) reveal.push(t); held = []; }
-async function ask(userText, { hidden = false, holdMs = 0 } = {}) {
+async function ask(userText, { hidden = false, holdMs = 0, logged = false } = {}) {
   if (busy || pendingEnd) return;
   setBusy(true);
   for (const t of idleTimers) clearTimeout(t);
   idleTimers = [];
-  if (!hidden) { transcript.add("you", userText); cuffs.pull(); audio.play("creak", 0.12, 0.2); turns++; }
+  if (!hidden) { if (logged) transcript.settlePending(); else transcript.add("you", userText); cuffs.pull(); audio.play("creak", 0.12, 0.2); turns++; }
   // From the fourth answer on, the desk sergeant knocks: the server injects the
   // cue as a system note, so it never becomes testimony in the record.
   const cue = !hidden && turns >= 4 && !interviewOver ? "decide" : null;
@@ -336,7 +337,15 @@ form.addEventListener("submit", (e) => {
   const text = input.value.trim();
   if (!text) return;
   if (pendingEnd || openingPending) return; // he is about to speak; keep the text in the box
-  if (busy) { fastForward(); if (!interviewOver) { queuedText = text; input.value = ""; input.style.height = "auto"; } return; }
+  if (busy) {
+    fastForward();
+    if (!interviewOver) {
+      queuedText = queuedText ? `${queuedText}\n${text}` : text;
+      transcript.add("you", text, true);
+      input.value = ""; input.style.height = "auto";
+    }
+    return;
+  }
   input.value = ""; input.style.height = "auto";
   ask(text);
 });
@@ -356,6 +365,7 @@ function restart() {
   transcript.clear(); bubble.hide(); ending.hidden = true; turns = 0; interviewOver = false; pendingEnd = false;
   audio.setAmbienceLevel(0.16);
   if (detective) detective.cue({ lean: 0, headDown: 0 });
+  form.hidden = false;
   input.focus();
   setTimeout(openingLine, 50);
 }
@@ -454,7 +464,7 @@ function frame() {
   if (detective) {
     detective.update(dt, now / 1000, scene.camera);
     detective.headWorld(headPos);
-    headPos.y += 0.16; headPos.x += 0.12;
+    headPos.y += 0.02; headPos.x += 0.11;
     bubble.setAnchor(headPos);
   }
   bubble.update();

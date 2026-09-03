@@ -19,9 +19,9 @@ export class Transcript {
     if (this.toggle) this.toggle.textContent = on ? "close" : "open";
     if (on) this.scroll();
   }
-  add(role, text) {
+  add(role, text, pending = false) {
     const p = document.createElement("p");
-    p.className = role;
+    p.className = role + (pending ? " pending" : "");
     const who = document.createElement("span");
     who.className = "who";
     who.textContent = role === "you" ? "SUSPECT" : "KOWALSKI";
@@ -44,6 +44,7 @@ export class Transcript {
     this.scroll();
   }
   endLive() { this.live = null; }
+  settlePending() { for (const p of this.record.querySelectorAll("p.pending")) p.classList.remove("pending"); }
   clear() { this.record.replaceChildren(); this.live = null; }
   scroll() {
     if (!this.userScrolled) this.record.scrollTop = this.record.scrollHeight;

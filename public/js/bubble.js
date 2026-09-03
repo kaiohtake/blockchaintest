@@ -15,6 +15,7 @@ export class Bubble {
     this.moreEl = document.createElement("span");
     this.moreEl.className = "more";
     this.moreEl.textContent = "▼";
+    this.tail = document.getElementById("tail");
     this.visible = false;
   }
   // Does the text overrun the window? Measured on the text itself: the
@@ -26,8 +27,7 @@ export class Bubble {
     range.selectNodeContents(this.el);
     const text = range.getBoundingClientRect().height;
     const cs = getComputedStyle(this.el);
-    const inner = this.el.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
-    return text > inner + 1;
+    return text > parseFloat(cs.lineHeight) * 4 + 1;
   }
   setAnchor(v) {
     this.anchor.copy(v);
@@ -40,6 +40,7 @@ export class Bubble {
     if (showCaret) this.el.append(this.caret);
     if (this.showMore) this.el.append(this.moreEl);
     this.el.hidden = !text;
+    this.tail.hidden = !text;
     this.visible = Boolean(text);
     if (this.visible) this.thinkingEl.hidden = true;
   }
@@ -57,6 +58,7 @@ export class Bubble {
   hide() {
     this.setText("", false);
     this.thinkingEl.hidden = true;
+    this.tail.hidden = true;
     this.el.classList.remove("fading");
   }
   // Fade the card out, run fn (usually a text swap), fade back in.
@@ -74,14 +76,22 @@ export class Bubble {
     const w = window.innerWidth, h = window.innerHeight;
     let x = Math.round((this.tmp.x * 0.5 + 0.5) * w);
     let y = Math.round((-this.tmp.y * 0.5 + 0.5) * h);
-    const margin = 12;
-    const half = Math.min(220, w * 0.39);
-    x = Math.max(half + margin, Math.min(w - half - margin, x));
+    const cardW = this.el.offsetWidth || 460;
+    const cardH = this.el.offsetHeight || 60;
     const bar = document.body.classList.contains("letterbox") ? h * 0.11 : 0;
-    y = Math.max(bar + this.el.offsetHeight + 24, y);
+    // Beside his head, not on it: to the right when there is room, else left.
+    let left = x + 26;
+    let tailX = x + 18;
+    if (left + cardW > w - 12) { left = x - 26 - cardW; tailX = x - 26; }
+    left = Math.max(12, Math.min(w - cardW - 12, left));
+    y = Math.max(bar + cardH / 2 + 12, Math.min(h * 0.8, y));
     for (const el of [this.el, this.thinkingEl]) {
-      el.style.left = `${x}px`;
+      el.style.left = `${left}px`;
       el.style.top = `${y}px`;
     }
+    const flipped = left < x;
+    this.tail.style.left = `${flipped ? left + cardW : left - 8}px`;
+    this.tail.style.top = `${y - 8}px`;
+    this.tail.style.transform = flipped ? "scaleX(-1)" : "";
   }
 }
