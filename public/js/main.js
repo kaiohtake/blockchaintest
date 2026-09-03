@@ -60,95 +60,26 @@ try {
   console.error("detective failed to load", err);
   gateNote.textContent = "The detective is late. The room still works.";
 }
-window.__interrogation = { scene, get detective() { return detective; }, get reveal() { return reveal; }, get busy() { return busy; }, get page() { return { start: pageStart, end: pageEnd, held: holding() }; } };
+window.__interrogation = { scene, get detective() { return detective; }, get reveal() { return reveal; }, get busy() { return busy; }, get scroll() { return { offset: bubble.offset, target: bubble.scrollTarget() }; } };
 
 const voice = new Voice(audio, (level) => { if (detective) detective.mouth.levelGain = 0.45 + 0.55 * level; });
 
 // ---- reveal (the master clock) ----------------------------------------
-// Dialogue is a fixed four-line window by his head, paged like a visual
-// novel: text fills the window from the top at reading pace; when the next
-// word would not fit (measured against the real box, so nothing is ever
-// clipped) the page holds for a reading-time beat or until you click, fades,
-// and the next page continues. The case file keeps everything.
+// Dialogue is a fixed four-line window by his head. Text streams in at
+// reading pace and the window slides up to keep the newest line in view,
+// like a teleprompter: nothing to click, nothing to advance. The case file
+// keeps everything, so a missed line is one glance away.
 let currentSentence = "";
 let letterCount = 0;
 const CHAR_S = 1 / 22;
-let pageStart = 0;      // index into reveal.revealed where this page begins
-let pageEnd = -1;       // set while a full page is being held
-let holdTimer = 0;
-let skipAll = false;    // Esc / click on the case file: no more holds this reply
 function readingMs(text) { return Math.min(8000, Math.max(1500, 600 + text.replace(/\s+/g, " ").length * 38)); }
-function pageText(end) { return reveal.revealed.slice(pageStart, end === undefined ? undefined : end).replace(/^\s+/, ""); }
-function holding() { return pageEnd >= 0; }
-// Render the page; if it overflows the window, back up to the last word
-// boundary that fits and hold there.
-function renderPage() {
-  const text = pageText();
-  bubble.setText(text, reveal.speaking);
-  if (!bubble.overflows()) return;
-  const all = reveal.revealed;
-  let end = all.length;
-  let guard = 0;
-  while (bubble.overflows() && guard++ < 80) {
-    let cut = -1;
-    for (let i = end - 2; i > pageStart; i--) { if (/\s/.test(all[i])) { cut = i; break; } }
-    if (cut <= pageStart) break;
-    end = cut;
-    bubble.setText(pageText(end), false);
-  }
-  // Prefer to break at a sentence end if one sits in the back part of the page.
-  if (!bubble.overflows()) {
-    const from = pageStart + Math.floor((end - pageStart) * 0.55);
-    for (let i = end - 1; i > from; i--) {
-      if (/[.!?]/.test(all[i]) && /\s/.test(all[i + 1] || " ")) { end = i + 1; bubble.setText(pageText(end), false); break; }
-    }
-  }
-  if (bubble.overflows()) {
-    // No whitespace fits (a hash, a URL): fall back to a character boundary.
-    let lo = pageStart + 1, hi = end;
-    while (lo < hi) {
-      const mid = (lo + hi + 1) >> 1;
-      bubble.setText(pageText(mid), false);
-      if (bubble.overflows()) hi = mid - 1; else lo = mid;
-    }
-    end = Math.max(pageStart + 1, lo);
-    bubble.setText(pageText(end), false);
-  }
-  pageEnd = end;
-  if (skipAll) { pageStart = end; pageEnd = -1; bubble.setText(pageText(), true); if (bubble.overflows()) renderPage(); return; }
-  reveal.pause();
-  reveal.instant = false;
-  if (detective) detective.mouth.clear();
-  bubble.more(true);
-  holdTimer = setTimeout(nextPage, readingMs(pageText(end)));
-}
-// Drop every remaining hold and finish the reply; the case file has it all.
+// Esc, Enter on an empty box, or a click in the room: finish the reply now.
 function skipReply() {
-  if (!reveal.speaking && !holding()) return false;
-  skipAll = true;
-  reveal.instant = true;
+  if (!reveal.speaking && !(voice.enabled && voice.busy())) return false;
+  reveal.skip();
+  if (voice.enabled) voice.cancel();
   if (detective) detective.mouth.clear();
-  if (holding()) nextPage();
   return true;
-}
-function nextPage() {
-  clearTimeout(holdTimer);
-  if (!holding()) return;
-  const end = pageEnd;
-  pageEnd = -1;
-  bubble.more(false);
-  bubble.fadeTo(() => {
-    pageStart = end;
-    bubble.setText(pageText(), true);
-    reveal.resume(performance.now());
-    if (bubble.overflows()) renderPage();
-  });
-}
-// Click / Enter: a held page advances; a page still typing completes.
-function fastForward() {
-  if (holding()) { nextPage(); return true; }
-  if (reveal.speaking) { reveal.instant = true; if (detective) detective.mouth.clear(); return true; }
-  return false;
 }
 const reveal = new Reveal({
   onChar: (ch) => {
@@ -163,7 +94,7 @@ const reveal = new Reveal({
   onUpdate: (revealed, sentence) => {
     if (voice.enabled && !voice.playing && sentence.trim()) currentSentence = sentence.trimStart();
     if (voice.enabled && voice.playing) bubble.setText(currentSentence, reveal.speaking);
-    else renderPage();
+    else bubble.setText(revealed, reveal.speaking);
     transcript.updateLive(revealed);
   },
   onIdle: (revealed) => {
@@ -178,14 +109,14 @@ function finishIdle(revealed) {
     reveal.instant = false;
     document.body.classList.remove("letterbox");
     if (detective) detective.mouth.clear();
-    // The last page stays for a full read, then fades on its own.
-    bubble.setText(voice.enabled ? currentSentence : pageText(), false);
+    // The last lines stay for a full read, then fade on their own.
+    bubble.setText(voice.enabled ? currentSentence : revealed, false);
     const tryFade = () => {
       if (reveal.speaking) return;
       if (bubble.el.matches(":hover")) { idleTimers.push(setTimeout(tryFade, 2000)); return; }
       bubble.fadeOut(700);
     };
-    idleTimers.push(setTimeout(tryFade, readingMs(pageText()) + 2000));
+    idleTimers.push(setTimeout(tryFade, readingMs(revealed.slice(-220)) + 2000));
     if (pendingEnd) { pendingEnd = false; endTimer = setTimeout(() => endInterview(revealed), 1200); }
     setBusy(false);
     if (queuedText && !interviewOver) { const t = queuedText; queuedText = ""; ask(t, { logged: true }); }
@@ -267,7 +198,6 @@ async function ask(userText, { hidden = false, holdMs = 0, logged = false } = {}
   const cue = !hidden && turns >= 4 && !interviewOver ? "decide" : null;
   reveal.reset();
   reveal.instant = false;
-  clearTimeout(holdTimer); pageStart = 0; pageEnd = -1; skipAll = false;
   bubble.hide();
   held = [];
   holdUntil = holdMs ? performance.now() + holdMs : 0;
@@ -338,7 +268,7 @@ form.addEventListener("submit", (e) => {
   if (!text) return;
   if (pendingEnd || openingPending) return; // he is about to speak; keep the text in the box
   if (busy) {
-    fastForward();
+    // Queue it; he keeps talking. Skipping is Esc's job, not the answer box's.
     if (!interviewOver) {
       queuedText = queuedText ? `${queuedText}\n${text}` : text;
       transcript.add("you", text, true);
@@ -352,15 +282,18 @@ form.addEventListener("submit", (e) => {
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
-    if (!input.value.trim()) { fastForward(); return; }
+    if (!input.value.trim()) { skipReply(); return; }
     form.requestSubmit();
   }
 });
 input.addEventListener("input", () => { input.style.height = "auto"; input.style.height = `${Math.min(input.scrollHeight, 120)}px`; });
 function restart() {
   chat.clear();
+  // Drop the queue and the voice drain first: cancel() can fire onDrain →
+  // finishIdle, which would otherwise send a stale queued answer.
+  queuedText = ""; voice.onDrain = null;
   reveal.reset(); voice.cancel(); if (detective) detective.mouth.clear();
-  clearTimeout(endTimer); clearTimeout(holdTimer); pageStart = 0; pageEnd = -1; queuedText = ""; skipAll = false;
+  clearTimeout(endTimer);
   setBusy(false); // release the lock the aborted turn held
   transcript.clear(); bubble.hide(); ending.hidden = true; turns = 0; interviewOver = false; pendingEnd = false;
   audio.setAmbienceLevel(0.16);
@@ -433,7 +366,7 @@ function openingLine() {
   setBusy(true);
   for (const t of idleTimers) clearTimeout(t);
   idleTimers = [];
-  reveal.reset(); reveal.instant = false; bubble.hide(); clearTimeout(holdTimer); pageStart = 0; pageEnd = -1; skipAll = false;
+  reveal.reset(); reveal.instant = false; bubble.hide();
   currentSentence = "";
   scene.setSpeaking(true);
   if (detective) detective.mouth.clear();
@@ -447,9 +380,8 @@ function openingLine() {
 }
 // Some browsers keep the AudioContext suspended after the first gesture; retry once.
 addEventListener("pointerdown", () => { if (audio.ctx && audio.ctx.state !== "running") audio.unlock(); }, { passive: true });
-// Click anywhere in the room to skip the typewriter.
-for (const el of [$("view"), $("subtitle")]) el.addEventListener("pointerdown", () => { fastForward(); });
-$("record").addEventListener("pointerdown", () => { skipReply(); });
+// Click anywhere in the room, or on the card, to skip the typewriter.
+for (const el of [$("view"), $("subtitle")]) el.addEventListener("pointerdown", () => { skipReply(); });
 addEventListener("keydown", (e) => { if (e.key === "Escape") { if (skipReply()) e.preventDefault(); } });
 
 // ---- frame loop --------------------------------------------------------
@@ -467,7 +399,7 @@ function frame() {
     headPos.y += 0.02; headPos.x += 0.11;
     bubble.setAnchor(headPos);
   }
-  bubble.update();
+  bubble.update(now);
   scene.render();
 }
 frame();

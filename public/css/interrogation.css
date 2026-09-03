@@ -84,11 +84,10 @@ body.letterbox { --bar-h: 11vh; }
   position: fixed; z-index: 4; pointer-events: auto;
   width: min(460px, 80vw);
   padding: 10px 14px 11px;
-  font-size: 17px; line-height: 1.32;
+  font-size: 17px; line-height: 22px; /* whole pixels: the slide snaps to line multiples */
   transform: translate(0, -50%);
   will-change: transform, left, top;
   white-space: pre-wrap;
-  min-height: calc(1.32em + 21px); max-height: calc(1.32em * 4 + 21px); overflow: hidden;
   overflow-wrap: anywhere; word-break: break-word;
   scrollbar-width: thin; scrollbar-color: rgba(23,20,15,0.45) transparent;
   transition: opacity 260ms ease;
@@ -102,9 +101,11 @@ body.letterbox { --bar-h: 11vh; }
 }
 #subtitle.tremor { animation: tremor 90ms linear infinite; }
 @keyframes tremor { 0%{ margin-left:0 } 50%{ margin-left:1px } 100%{ margin-left:-1px } }
-#subtitle .more { position: absolute; right: 8px; bottom: 4px; font-size: 10px; color: var(--ink-soft); animation: bob 0.9s ease-in-out infinite; pointer-events: none; }
-@keyframes bob { 50% { transform: translateY(2px); } }
-#subtitle .caret { display: inline-block; width: 0.55em; height: 1em; vertical-align: -0.15em; background: var(--ink); animation: caret 1s steps(2) infinite; }
+#subtitle .window { min-height: 22px; max-height: 88px; overflow: hidden; }
+/* While sliding, the line leaving at the top and the one arriving at the bottom fade instead of being chopped. */
+#subtitle .window.sliding { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 0.45em, #000 calc(100% - 0.45em), transparent 100%); mask-image: linear-gradient(to bottom, transparent 0, #000 0.45em, #000 calc(100% - 0.45em), transparent 100%); }
+#subtitle .scroll { will-change: transform; }
+#subtitle .caret { display: inline-block; width: 0.55em; height: 0.95em; vertical-align: text-bottom; background: var(--ink); animation: caret 1s steps(2) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 
 #thinking {
@@ -216,6 +217,6 @@ body.busy #you { opacity: .55; }
 @media (prefers-reduced-motion: reduce) {
   #grade::after { display: none; }
   #subtitle.tremor { animation: none; }
-  #subtitle .caret, #subtitle .more, #thinking span { animation: none; }
+  #subtitle .caret, #thinking span { animation: none; }
   .bar { transition: none; }
 }

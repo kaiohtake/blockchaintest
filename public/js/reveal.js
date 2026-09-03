@@ -6,8 +6,7 @@ const CHAR_MS = 1000 / 22;
 // pace; a long numbered answer would take a minute, so it accelerates and the
 // case file becomes the reading surface.
 function paceMs(pending) {
-  if (pending > 400) return 1000 / 34;
-  if (pending > 150) return 1000 / 28;
+  if (pending > 150) return 1000 / 26; // any faster and the card outruns a reader
   return CHAR_MS;
 }
 const PAUSE = { ",": 160, ";": 160, ":": 200, ".": 340, "!": 340, "?": 360, "\n": 220 };
@@ -31,10 +30,7 @@ export class Reveal {
     this.streamDone = false;
     this.speaking = false;
     this.next = 0;
-    this.paused = false;
   }
-  pause() { this.paused = true; }
-  resume(now) { this.paused = false; this.next = now || 0; }
   push(text) {
     if (!this.speaking) this.next = 0;
     this.buffer += text;
@@ -43,10 +39,12 @@ export class Reveal {
   finish() {
     this.streamDone = true;
   }
-  // Player pressed a key mid-reveal: show everything.
+  // Esc: show everything buffered at once, and anything still streaming in.
+  // The idle path runs from update() once the stream is done.
   skip() {
+    this.instant = true;
     while (this.pos < this.buffer.length) this.step(true);
-    this.settle();
+    this.onUpdate(this.revealed, this.sentence);
   }
   get pending() {
     return this.buffer.length - this.pos;
@@ -93,11 +91,9 @@ export class Reveal {
       this.onIdle(this.revealed);
     }
   }
-  // Frame-rate independent: reveals as many characters as the clock owes,
-  // so a slow frame does not slow the typewriter.
+  // Reveals as many characters as the clock owes, up to 40 a frame and
+  // 400 ms of debt, so a slow frame does not slow the typewriter much.
   update(now) {
-    // A held page blocks everything, including the idle path.
-    if (this.paused) { this.next = now; return; }
     if (this.pos >= this.buffer.length) {
       if (this.streamDone && this.speaking) this.settle();
       return;
@@ -109,11 +105,10 @@ export class Reveal {
     while (this.pos < this.buffer.length && now >= this.next && guard++ < 40) {
       const ch = this.step();
       const ms = this.instant ? 0 : paceMs(this.pending);
-      this.next = Math.max(this.next, now - 120) + ms + (this.instant ? 0 : (PAUSE[ch] || 0));
+      this.next = Math.max(this.next, now - 400) + ms + (this.instant ? 0 : (PAUSE[ch] || 0));
       changed = true;
     }
     if (changed) this.onUpdate(this.revealed, this.sentence);
-    if (this.paused) return;
     if (this.pos >= this.buffer.length && this.streamDone) this.settle();
   }
 }
