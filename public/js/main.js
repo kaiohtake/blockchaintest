@@ -248,6 +248,17 @@ async function ask(userText, { hidden = false, holdMs = 0, logged = false } = {}
       reveal.finish();
       showCard("LINE DEAD", `${why}. Fix it and try again.`, 9000);
       if (!reveal.speaking) { if (started) transcript.endLive(); scene.setSpeaking(false); document.body.classList.remove("letterbox"); setBusy(false); }
+    } else if (!started && typeof err?.message === "string" && err.message.startsWith("[")) {
+      // The edge limiter refuses in character ("[closes file] ..."): let him
+      // say it and keep the room open, instead of a LINE DEAD card that
+      // invites a retry which cannot succeed for hours.
+      reveal.reset(); reveal.instant = false;
+      if (detective) detective.mouth.clear();
+      transcript.startLive();
+      const parser = new TagParser({ onText: (t) => reveal.push(t), onCue: (tag) => applyCue(tag) });
+      parser.push(err.message);
+      parser.flush();
+      reveal.finish();
     } else {
       reveal.finish(); reveal.reset();
       if (detective) detective.mouth.clear();
